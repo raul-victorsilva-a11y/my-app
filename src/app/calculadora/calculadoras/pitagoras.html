@@ -1,0 +1,41 @@
+<h1>Pitágoras</h1>
+
+<img src="pitagoras.png" width="500">
+
+<br><br>
+
+<input type="text" id="aValue"> A² +
+<input type="text" id="bValue"> B² =
+<input type="text" id="cValue"> C²
+
+<br>
+
+<input type="button" onclick="calcular()" value="Calcular">
+
+<br>
+
+<p id="display"></p>
+
+<script>
+function calcular() {
+    let a = document.getElementById("aValue").value
+    let b = document.getElementById("bValue").value
+    let c = document.getElementById("cValue").value
+    let display = document.getElementById("display")
+
+    a = Number(a)
+    b = Number(b)
+    c = Number(c)
+
+    if (c == 0) {
+        c = (a ** 2 + b ** 2) ** 0.5
+        display.textContent = `C = ${c}`
+    } else if (b == 0) {
+        b = (c ** 2 - a ** 2) ** 0.5
+        display.textContent = `B = ${b}`
+    } else if (a == 0) {
+        a = (c ** 2 - b ** 2) ** 0.5
+        display.textContent = `A = ${a}`
+    }
+}
+</script>
