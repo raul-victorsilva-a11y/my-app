@@ -1,3 +1,4 @@
+
 import * as Device from 'expo-device';
 import { Platform, StyleSheet, Text, TextInput, Button } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
@@ -13,6 +14,7 @@ function getDevMenuHint() {
   if (Platform.OS === 'web') {
     return <ThemedText type="small">use browser devtools</ThemedText>;
   }
+
   if (Device.isDevice) {
     return (
       <ThemedText type="small">
@@ -41,23 +43,34 @@ export default function HomeScreen() {
     let B = Number(b);
     let C = Number(c);
 
+    if (a === '' || b === '' || c === '') {
+      setResultado('Preencha A, B e C');
+      return;
+    }
+
+    if (A === 0) {
+      setResultado('A nao pode ser zero');
+      return;
+    }
+
     let delta = B ** 2 - 4 * A * C;
+
+    if (delta < 0) {
+      setResultado('Delta negativo: nao existem raizes reais');
+      return;
+    }
 
     let x1 = (-B + Math.sqrt(delta)) / (2 * A);
     let x2 = (-B - Math.sqrt(delta)) / (2 * A);
 
-    setResultado(`x1 = ${x1} e x2 = ${x2}`);
+    setResultado(`Delta = ${delta}\nX1 = ${x1}\nX2 = ${x2}`);
   }
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-
         <Text style={styles.titulo}>Bhaskara</Text>
-
-        <Text style={styles.formula}>
-          A x² + B x + C = 0
-        </Text>
+        <Text style={styles.formula}>Ax² + Bx + C = 0</Text>
 
         <TextInput
           style={styles.input}
@@ -72,7 +85,7 @@ export default function HomeScreen() {
           onChangeText={onChangeB}
           value={b}
           placeholder="B"
-          keyboardType="numeric"
+          keyboardType="numbers-and-punctuation"
         />
 
         <TextInput
@@ -80,18 +93,12 @@ export default function HomeScreen() {
           onChangeText={onChangeC}
           value={c}
           placeholder="C"
-          keyboardType="numeric"
+          keyboardType="numbers-and-punctuation"
         />
 
-        <Button
-          title="Calcular"
-          onPress={calcular}
-        />
+        <Button title="Calcular" onPress={calcular} />
 
-        <Text style={styles.resultado}>
-          {resultado}
-        </Text>
-
+        <Text style={styles.resultado}>{resultado}</Text>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -103,27 +110,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   titulo: {
     fontSize: 25,
     marginBottom: 10,
   },
-
   formula: {
+    fontSize: 18,
     marginBottom: 10,
   },
-
   input: {
-    width: 120,
-    height: 35,
-    borderWidth: 1,
-    padding: 5,
+    width: 140,
+    height: 38,
     margin: 5,
+    borderWidth: 1,
+    padding: 8,
     textAlign: 'center',
   },
-
   resultado: {
-    marginTop: 15,
     fontSize: 18,
+    textAlign: 'center',
+    marginTop: 15,
   },
 });
