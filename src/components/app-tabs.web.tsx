@@ -34,7 +34,7 @@ export default function AppTabs() {
             <TabButton>Pitagoras</TabButton>
           </TabTrigger>
 <TabTrigger name="bhaskara" href ="./calculadora/bhaskara" asChild>
-            <TabButton>Bhaskara</TabButton>
+            <TabButton>bhaskara</TabButton>
           </TabTrigger>
 
 
