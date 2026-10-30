@@ -1,0 +1,259 @@
+import { describe, expect, test } from '@jest/globals';
+import {
+  calcularBhaskara,
+  calcularDelta,
+  calcularHipotenusa,
+  calcularRaizes,
+  calcularResultado,
+  digitarNumero,
+  digitarPonto,
+} from './funcoes';
+
+// ===============================================================
+// BHASKARA
+// ===============================================================
+describe('calcularDelta', () => {
+  test('calcula delta positivo', () => {
+    // 1x² - 5x + 6 -> 25 - 24 = 1
+    expect(calcularDelta(1, -5, 6)).toBe(1);
+  });
+
+  test('calcula delta zero', () => {
+    // 1x² - 4x + 4 -> 16 - 16 = 0
+    expect(calcularDelta(1, -4, 4)).toBe(0);
+  });
+
+  test('calcula delta negativo', () => {
+    // 1x² + 1x + 1 -> 1 - 4 = -3
+    expect(calcularDelta(1, 1, 1)).toBe(-3);
+  });
+
+  test('funciona com A negativo', () => {
+    // -1x² + 0x + 4 -> 0 + 16 = 16
+    expect(calcularDelta(-1, 0, 4)).toBe(16);
+  });
+});
+
+describe('calcularRaizes', () => {
+  test('retorna duas raízes diferentes quando delta > 0', () => {
+    const [x1, x2] = calcularRaizes(1, -5, 1);
+    expect(x1).toBeCloseTo(3);
+    expect(x2).toBeCloseTo(2);
+  });
+
+  test('retorna duas raízes iguais quando delta = 0', () => {
+    const [x1, x2] = calcularRaizes(1, -4, 0);
+    expect(x1).toBeCloseTo(2);
+    expect(x2).toBeCloseTo(2);
+  });
+
+  test('funciona com A negativo', () => {
+    const [x1, x2] = calcularRaizes(-1, 0, 16);
+    expect(x1).toBeCloseTo(-2);
+    expect(x2).toBeCloseTo(2);
+  });
+});
+
+describe('calcularBhaskara', () => {
+  describe('validações', () => {
+    test('pede para preencher quando A está vazio', () => {
+      expect(calcularBhaskara('', '2', '3')).toBe('Preencha A, B e C');
+    });
+
+    test('pede para preencher quando B está vazio', () => {
+      expect(calcularBhaskara('1', '', '3')).toBe('Preencha A, B e C');
+    });
+
+    test('pede para preencher quando C está vazio', () => {
+      expect(calcularBhaskara('1', '2', '')).toBe('Preencha A, B e C');
+    });
+
+    test('trata campo só com espaços como vazio', () => {
+      expect(calcularBhaskara('   ', '2', '3')).toBe('Preencha A, B e C');
+    });
+
+    test('recusa valores que não são números', () => {
+      expect(calcularBhaskara('abc', '2', '3')).toBe('Digite apenas numeros');
+      expect(calcularBhaskara('1', 'x', '3')).toBe('Digite apenas numeros');
+      expect(calcularBhaskara('1', '2', '1,5')).toBe('Digite apenas numeros');
+    });
+
+    test('recusa A igual a zero', () => {
+      expect(calcularBhaskara('0', '2', '3')).toBe('A nao pode ser zero');
+    });
+  });
+
+  describe('delta negativo', () => {
+    test('informa que não existem raízes reais', () => {
+      expect(calcularBhaskara('1', '1', '1')).toBe(
+        'Delta negativo: nao existem raizes reais'
+      );
+    });
+  });
+
+  describe('resultados', () => {
+    test('delta positivo: duas raízes diferentes', () => {
+      expect(calcularBhaskara('1', '-5', '6')).toBe(
+        'Delta = 1\nX1 = 3\nX2 = 2'
+      );
+    });
+
+    test('delta zero: duas raízes iguais', () => {
+      expect(calcularBhaskara('1', '-4', '4')).toBe(
+        'Delta = 0\nX1 = 2\nX2 = 2'
+      );
+    });
+
+    test('A negativo', () => {
+      expect(calcularBhaskara('-1', '0', '4')).toBe(
+        'Delta = 16\nX1 = -2\nX2 = 2'
+      );
+    });
+
+    test('números decimais', () => {
+      // 0.5x² - 1.5x + 1 = 0 -> delta = 0.25, raízes 2 e 1
+      expect(calcularBhaskara('0.5', '-1.5', '1')).toBe(
+        'Delta = 0.25\nX1 = 2\nX2 = 1'
+      );
+    });
+
+    test('B e C iguais a zero', () => {
+      // x² = 0 -> raiz 0
+      expect(calcularBhaskara('1', '0', '0')).toBe('Delta = 0\nX1 = 0\nX2 = 0');
+    });
+  });
+});
+
+// ===============================================================
+// CALCULADORA
+// ===============================================================
+describe('digitarNumero', () => {
+  test('substitui o zero inicial pelo número digitado', () => {
+    expect(digitarNumero('0', '5', false)).toBe('5');
+  });
+
+  test('adiciona o número ao final do visor', () => {
+    expect(digitarNumero('12', '3', false)).toBe('123');
+  });
+
+  test('começa um número novo depois de uma operação', () => {
+    expect(digitarNumero('12', '3', true)).toBe('3');
+  });
+
+  test('começa um número novo depois de mostrar Erro', () => {
+    expect(digitarNumero('Erro', '7', true)).toBe('7');
+  });
+
+  test('permite digitar zero depois de outro número', () => {
+    expect(digitarNumero('10', '0', false)).toBe('100');
+  });
+});
+
+describe('digitarPonto', () => {
+  test('adiciona o ponto ao número atual', () => {
+    expect(digitarPonto('12', false)).toBe('12.');
+  });
+
+  test('adiciona o ponto ao zero', () => {
+    expect(digitarPonto('0', false)).toBe('0.');
+  });
+
+  test('não adiciona um segundo ponto', () => {
+    expect(digitarPonto('1.5', false)).toBe('1.5');
+  });
+
+  test('começa com 0. quando é um número novo', () => {
+    expect(digitarPonto('12', true)).toBe('0.');
+  });
+});
+
+describe('calcularResultado', () => {
+  test('soma', () => {
+    expect(calcularResultado('2', '3', '+')).toBe('5');
+  });
+
+  test('subtrai', () => {
+    expect(calcularResultado('10', '4', '-')).toBe('6');
+  });
+
+  test('subtrai com resultado negativo', () => {
+    expect(calcularResultado('3', '8', '-')).toBe('-5');
+  });
+
+  test('multiplica', () => {
+    expect(calcularResultado('6', '7', 'x')).toBe('42');
+  });
+
+  test('divide', () => {
+    expect(calcularResultado('10', '4', '/')).toBe('2.5');
+  });
+
+  test('mostra Erro ao dividir por zero', () => {
+    expect(calcularResultado('5', '0', '/')).toBe('Erro');
+  });
+
+  test('aceita números decimais', () => {
+    expect(calcularResultado('1.5', '1.5', '+')).toBe('3');
+  });
+
+  test('soma decimais com margem para erro de ponto flutuante', () => {
+    // 0.1 + 0.2 em JavaScript dá 0.30000000000000004
+    expect(Number(calcularResultado('0.1', '0.2', '+'))).toBeCloseTo(0.3);
+  });
+
+  test('multiplicar por zero dá zero', () => {
+    expect(calcularResultado('9', '0', 'x')).toBe('0');
+  });
+});
+
+// ===============================================================
+// PITÁGORAS
+// ===============================================================
+describe('calcularHipotenusa', () => {
+  test('calcula o triângulo 3-4-5', () => {
+    expect(calcularHipotenusa('3', '4')).toBe('5.00');
+  });
+
+  test('calcula o triângulo 5-12-13', () => {
+    expect(calcularHipotenusa('5', '12')).toBe('13.00');
+  });
+
+  test('arredonda para 2 casas decimais', () => {
+    // raiz de 2 = 1.41421...
+    expect(calcularHipotenusa('1', '1')).toBe('1.41');
+  });
+
+  test('aceita números decimais', () => {
+    // 1.5² + 2² = 6.25 -> raiz = 2.5
+    expect(calcularHipotenusa('1.5', '2')).toBe('2.50');
+  });
+
+  test('funciona quando um dos lados é zero', () => {
+    expect(calcularHipotenusa('0', '7')).toBe('7.00');
+  });
+
+  test('funciona quando os dois lados são zero', () => {
+    expect(calcularHipotenusa('0', '0')).toBe('0.00');
+  });
+
+  test('o resultado é o mesmo com os lados trocados', () => {
+    expect(calcularHipotenusa('3', '4')).toBe(calcularHipotenusa('4', '3'));
+  });
+
+  test('retorna null quando A está vazio', () => {
+    expect(calcularHipotenusa('', '4')).toBeNull();
+  });
+
+  test('retorna null quando B está vazio', () => {
+    expect(calcularHipotenusa('3', '')).toBeNull();
+  });
+
+  test('retorna null quando o campo só tem espaços', () => {
+    expect(calcularHipotenusa('   ', '4')).toBeNull();
+  });
+
+  test('retorna null quando não é número', () => {
+    expect(calcularHipotenusa('abc', '4')).toBeNull();
+    expect(calcularHipotenusa('3', 'x')).toBeNull();
+  });
+});
